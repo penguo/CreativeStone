@@ -94,6 +94,13 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
                     }
                 }
             });
+        } else {
+            holder.layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
         }
     }
 
@@ -108,6 +115,7 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
         final TextView name = (TextView) updateLayout.findViewById(R.id.dialog_tv_name);
         final TextView numA = (TextView) updateLayout.findViewById(R.id.dialog_tv_numA);
         final TextView numB = (TextView) updateLayout.findViewById(R.id.dialog_tv_numB);
+        final TextView detail = (TextView) updateLayout.findViewById(R.id.dialog_tv_detail);
         final Button btn1 = (Button) updateLayout.findViewById(R.id.dialog_btn1);
         final Button btn2 = (Button) updateLayout.findViewById(R.id.dialog_btn2);
         final Button btn3 = (Button) updateLayout.findViewById(R.id.dialog_btn3);
@@ -117,6 +125,12 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
         name.setText(data.get(position).getName());
         numA.setText(data.get(position).getNumA() + "");
         numB.setText(data.get(position).getNumB() + "");
+        if (!data.get(position).getDetail().equals("")) {
+            detail.setVisibility(View.VISIBLE);
+            detail.setText(data.get(position).getDetail());
+        } else {
+            detail.setVisibility(View.GONE);
+        }
 
         builder.setView(updateLayout);
         dialog = builder.create();

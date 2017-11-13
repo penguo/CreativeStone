@@ -36,15 +36,16 @@
             android:id="@+id/game_tv_lognow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
+            android:layout_margin="3dp"
             android:padding="3dp"
             android:text="TextView"
             android:textSize="18sp" />
 
         <ScrollView
+            android:id="@+id/game_scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5">
+            android:layout_weight="1">
 
             <LinearLayout
                 android:layout_width="match_parent"

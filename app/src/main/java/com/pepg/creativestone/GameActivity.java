@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.pepg.creativestone.Adapter.ListRcvAdapter;
@@ -19,19 +20,27 @@ public class GameActivity extends AppCompatActivity {
     RecyclerView rcvRed, rcvBlue, rcvRedField, rcvBlueField;
     static ListRcvAdapter listRcvAdapterRed, listRcvAdapterBlue, listRcvAdapterRedField, listRcvAdapterBlueField;
     static TextView tvLog, tvLogNow, tvSpRed, tvSpBlue;
-    static String gameLog;
     public static ArrayList<Card> cardsRed, cardsBlue, cardsRedField, cardsBlueField;
-    public static int turn, side, spRed, spBlue;
+    public static int turn, side, spRed, spBlue, gameLogCheck, i;
     static GameSystem gameSystem;
     static Button btn1, btn2, btn3;
     public static boolean clickableCard, isAttacking;
     public static int selectedCard, phase, attackingCard;
+    static ScrollView scrollview;
+    static ArrayList<String> gameLog;
+    public static Card recentCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        gameLog = "";
+        gameLog = new ArrayList<>();
+        gameLog.add("\n");
+        gameLog.add("\n");
+        gameLog.add("\n");
+        gameLog.add("\n");
+        gameLog.add("\n");
+        gameLogCheck = 0;
         tvLog = (TextView) findViewById(R.id.game_tv_log);
         tvLogNow = (TextView) findViewById(R.id.game_tv_lognow);
         tvSpRed = (TextView) findViewById(R.id.game_tv_sp_red);
@@ -43,6 +52,7 @@ public class GameActivity extends AppCompatActivity {
         btn1 = (Button) findViewById(R.id.game_btn1);
         btn2 = (Button) findViewById(R.id.game_btn2);
         btn3 = (Button) findViewById(R.id.game_btn3);
+        scrollview = (ScrollView) findViewById(R.id.game_scrollview);
 
         cardsRed = new ArrayList<>();
         cardsBlue = new ArrayList<>();
@@ -71,8 +81,12 @@ public class GameActivity extends AppCompatActivity {
 
     public static void addTvLog(String log) {
         tvLogNow.setText(log);
-        gameLog += "\n- "+ log;
-        tvLog.setText(gameLog);
+        gameLog.add("\n-" + log);
+        while (gameLog.size() > 5) {
+            gameLog.remove(0);
+        }
+        tvLog.setText(gameLog.get(0).toString() + gameLog.get(1).toString() + gameLog.get(2).toString() + gameLog.get(3).toString() + gameLog.get(4).toString());
+        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
     }
 
     public static void updateSpView() {
@@ -87,6 +101,9 @@ public class GameActivity extends AppCompatActivity {
         gameSystem.drawCard(1);
         gameSystem.drawCard(0);
         gameSystem.drawCard(1);
+        gameSystem.drawCard(0);
+        gameSystem.drawCard(1);
+        gameSystem.addCard(0,0,0,0);
         side = 0;
         phaseStart();
     }
@@ -99,8 +116,18 @@ public class GameActivity extends AppCompatActivity {
         int turnSp = 10 + (turn * 5);
         if (side == 0) {
             spRed = turnSp;
+            for (i = 0; i < cardsRedField.size(); i++) {
+                if(cardsRedField.get(i).isFieldPhasestartEff()){
+                    gameSystem.checkFieldPhasestartEff(cardsRedField.get(i), 0);
+                }
+            }
         } else if (side == 1) {
             spBlue = turnSp;
+            for (i = 0; i < cardsBlueField.size(); i++) {
+                if(cardsBlueField.get(i).isFieldPhasestartEff()){
+                    gameSystem.checkFieldPhasestartEff(cardsBlueField.get(i), 0);
+                }
+            }
         }
         updateSpView();
         phase1();
@@ -118,7 +145,9 @@ public class GameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 addTvLog("카드를 1장 뽑았습니다.");
                 gameSystem.drawCard(side);
-//                gameSystem.drawCard(side);
+                if (recentCard.isDrawEff()) {
+                    gameSystem.checkDrawEff(recentCard, side);
+                }
                 phase2();
             }
         });
@@ -149,21 +178,34 @@ public class GameActivity extends AppCompatActivity {
             listRcvAdapterBlue.notifyDataSetChanged();
         }
         addTvLog("카드를 버리고 새로 뽑았습니다.");
+        if (recentCard.isDrawEff()) {
+            gameSystem.checkDrawEff(recentCard, side);
+        }
         phase2();
     }
 
     public static void phase2() {
         phase = 2;
         resetButton();
-        addTvLog("카드를 선택하여 행동하거나 턴을 넘기세요.");
         clickableCard = true;
         if (side == 0) {
+            for (i = 0; i < cardsRedField.size(); i++) {
+                if(cardsRedField.get(i).isFieldEff()){
+                    gameSystem.checkFieldEff(cardsRedField.get(i), 0);
+                }
+            }
             listRcvAdapterRed.notifyDataSetChanged();
             listRcvAdapterRedField.notifyDataSetChanged();
         } else if (side == 1) {
+            for (i = 0; i < cardsBlueField.size(); i++) {
+                if(cardsBlueField.get(i).isFieldEff()){
+                    gameSystem.checkFieldEff(cardsBlueField.get(i), 0);
+                }
+            }
             listRcvAdapterBlue.notifyDataSetChanged();
             listRcvAdapterBlueField.notifyDataSetChanged();
         }
+        addTvLog("카드를 선택하여 행동하거나 턴을 넘기세요.");
         btn1.setText("턴 넘기기");
         btn2.setVisibility(View.GONE);
         btn3.setVisibility(View.GONE);
@@ -207,10 +249,16 @@ public class GameActivity extends AppCompatActivity {
             gameSystem.attack(cardsRedField.get(attackingCard), cardsBlueField.get(selectedCard));
             if (cardsBlueField.get(selectedCard).getNumB() <= 0) {
                 addTvLog(cardsBlueField.get(selectedCard).getName() + " 죽었다!");
+                if (cardsBlueField.get(selectedCard).isDeathEff()) {
+                    gameSystem.checkDeathEff(cardsBlueField.get(selectedCard), 1);
+                }
                 cardsBlueField.remove(selectedCard);
             }
             if (cardsRedField.get(attackingCard).getNumB() <= 0) {
                 addTvLog(cardsRedField.get(attackingCard).getName() + " 죽었다!");
+                if (cardsRedField.get(attackingCard).isDeathEff()) {
+                    gameSystem.checkDeathEff(cardsRedField.get(attackingCard), 0);
+                }
                 cardsRedField.remove(attackingCard);
             }
         } else if (side == 1) {
@@ -220,10 +268,16 @@ public class GameActivity extends AppCompatActivity {
             gameSystem.attack(cardsBlueField.get(attackingCard), cardsRedField.get(selectedCard));
             if (cardsRedField.get(selectedCard).getNumB() <= 0) {
                 addTvLog(cardsRedField.get(selectedCard).getName() + " 죽었다!");
+                if (cardsRedField.get(selectedCard).isDeathEff()) {
+                    gameSystem.checkDeathEff(cardsRedField.get(selectedCard), 0);
+                }
                 cardsRedField.remove(selectedCard);
             }
             if (cardsBlueField.get(attackingCard).getNumB() <= 0) {
                 addTvLog(cardsBlueField.get(attackingCard).getName() + " 죽었다!");
+                if (cardsBlueField.get(attackingCard).isDeathEff()) {
+                    gameSystem.checkDeathEff(cardsBlueField.get(attackingCard), 1);
+                }
                 cardsBlueField.remove(attackingCard);
             }
         }
@@ -280,7 +334,7 @@ public class GameActivity extends AppCompatActivity {
         btn3.setOnClickListener(null);
     }
 
-    public static void resetRcv(){
+    public static void resetRcv() {
         clickableCard = false;
         isAttacking = false;
         listRcvAdapterRed.notifyDataSetChanged();
