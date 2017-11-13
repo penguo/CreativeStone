@@ -103,7 +103,7 @@ public class GameActivity extends AppCompatActivity {
         gameSystem.drawCard(1);
         gameSystem.drawCard(0);
         gameSystem.drawCard(1);
-        gameSystem.addCard(0,0,0,0);
+        turn = 0;
         side = 0;
         phaseStart();
     }
