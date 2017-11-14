@@ -7,8 +7,7 @@ package com.pepg.creativestone.Data;
 public class Card {
 
     String name;
-    int numA;
-    int numB;
+    int numA, numB, type, castTarget, needSp;
     String detail;
     int specialCardNo;
     boolean drawEff, handEff, fieldEff, deathEff, fieldPhasestartEff;
@@ -23,6 +22,7 @@ public class Card {
         name = "";
         detail = "";
         specialCardNo = -1;
+        this.type = type;
         this.numA = numA;
         this.numB = numB;
         if (type == 0) {
@@ -66,6 +66,7 @@ public class Card {
                 case (0):
                     name += "정령";
                     detail = "적에게 피해를 주고 사라진다.";
+                    specialCardNo = 0;
                     break;
                 case (1):
                     name += "슬라임";
@@ -145,33 +146,44 @@ public class Card {
                 case (0):
                     name = "*소멸의 화살";
                     detail = "미니언이 맞을 경우 무조건 죽는다.";
+                    castTarget = 1;
                     break;
                 case (1):
-                    name += "번개";
+                    name = "*수호의 축복";
+                    castTarget = 3;
                     break;
                 case (2):
-                    name += "번개";
+                    name = "*신성한 축복";
+                    castTarget = 3;
                     break;
                 case (3):
-                    name += "번개";
+                    name += "필드";
+                    castTarget = 5;
+                    fieldEff = true;
                     break;
                 case (4):
-                    name += "번개";
+                    name += "화살";
+                    castTarget = 1;
                     break;
                 case (5):
-                    name += "번개";
+                    name += "칼날";
+                    castTarget = 1;
                     break;
                 case (6):
                     name += "번개";
+                    castTarget = 1;
                     break;
                 case (7):
                     name += "번개";
+                    castTarget = 1;
                     break;
                 case (8):
                     name += "지진";
+                    castTarget = 2;
                     break;
                 case (9):
                     name += "메테오";
+                    castTarget = 2;
                     break;
                 default:
                     name += "데이터";
@@ -179,6 +191,7 @@ public class Card {
             }
         }
         checkSpecialCard(type);
+        needSp = (numA + numB) / 3 + 1;
     }
 
     private void checkSpecialCard(int type) {
@@ -225,7 +238,7 @@ public class Card {
     }
 
     public int getNeedSp() {
-        return numA + numB;
+        return needSp;
     }
 
     public String getDetail() {
@@ -234,6 +247,14 @@ public class Card {
 
     public int getSpecialCardNo() {
         return specialCardNo;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public int getCastTarget() {
+        return castTarget;
     }
 
     public boolean isDrawEff() {

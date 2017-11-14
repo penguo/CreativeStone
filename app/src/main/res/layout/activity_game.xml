@@ -13,45 +13,131 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:id="@+id/game_tv_sp_red"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left|center_vertical"
-        android:background="@android:color/background_light"
-        android:text="TextView" />
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginBottom="100dp"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/game_tv_sp_blue"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:text="hp: "
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/game_tv_hp_red"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:text="100"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/game_layout_sp_red"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/background_light"
+                android:text=" / sp: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/game_tv_sp_red"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/background_light"
+                android:text="100"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:background="@android:color/background_light"
-        android:text="TextView" />
+        android:layout_gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="100dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:text="hp: "
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/game_tv_hp_blue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:text="100"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:id="@+id/game_layout_sp_blue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/background_light"
+                android:text=" / sp: "
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/game_tv_sp_blue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/background_light"
+                android:text="100"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/game_layout_button"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_gravity="right|center_vertical"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/game_btn1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
             android:text="Button" />
 
         <Button
             android:id="@+id/game_btn2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
             android:text="Button" />
 
         <Button
             android:id="@+id/game_btn3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
             android:text="Button" />
 
     </LinearLayout>

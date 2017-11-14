@@ -18,12 +18,16 @@ import com.pepg.creativestone.R;
 
 import java.util.ArrayList;
 
+import static com.pepg.creativestone.GameActivity.castTarget;
 import static com.pepg.creativestone.GameActivity.clickableCard;
 import static com.pepg.creativestone.GameActivity.isAttacking;
+import static com.pepg.creativestone.GameActivity.isCasting;
 import static com.pepg.creativestone.GameActivity.phase;
 import static com.pepg.creativestone.GameActivity.phase1Click;
 import static com.pepg.creativestone.GameActivity.phase2Attack;
 import static com.pepg.creativestone.GameActivity.phase2AttackSelect;
+import static com.pepg.creativestone.GameActivity.phase2CastTargeting;
+import static com.pepg.creativestone.GameActivity.phase2Casting;
 import static com.pepg.creativestone.GameActivity.phase2Summon;
 import static com.pepg.creativestone.GameActivity.selectedCard;
 
@@ -50,7 +54,7 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvNumA, tvNumB;
+        TextView tvName, tvNumA, tvNumB, tvCenterBar, tvNeedSp;
         LinearLayout layout;
 
         public ViewHolder(View itemView) {
@@ -59,6 +63,8 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
             tvName = (TextView) itemView.findViewById(R.id.item_tv_name);
             tvNumA = (TextView) itemView.findViewById(R.id.item_tv_numA);
             tvNumB = (TextView) itemView.findViewById(R.id.item_tv_numB);
+            tvNeedSp = (TextView) itemView.findViewById(R.id.item_tv_needsp);
+            tvCenterBar = (TextView) itemView.findViewById(R.id.item_tv_centerbar);
         }
     }
 
@@ -72,25 +78,52 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.tvName.setText(data.get(position).getName());
         holder.tvNumA.setText(data.get(position).getNumA() + "");
-        holder.tvNumB.setText(data.get(position).getNumB() + "");
+        if (data.get(position).getType() == 0) {
+            holder.tvCenterBar.setVisibility(View.VISIBLE);
+            holder.tvNumB.setVisibility(View.VISIBLE);
+            holder.tvNumB.setText(data.get(position).getNumB() + "");
+        } else {
+            holder.tvCenterBar.setVisibility(View.GONE);
+            holder.tvNumB.setVisibility(View.GONE);
+        }
+        if (!isField) {
+            holder.tvNeedSp.setVisibility(View.VISIBLE);
+            holder.tvNeedSp.setText(data.get(position).getNeedSp() + "");
+        } else {
+            holder.tvNeedSp.setVisibility(View.GONE);
+        }
         if (clickableCard) {
             holder.layout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (side == GameActivity.side) {
-                        if (phase == 1) {
+                    switch (phase) {
+                        case (1):
                             selectedCard = position;
                             clickableCard = false;
                             phase1Click();
-                        } else if (phase == 2) {
-                            if (!isAttacking) {
-                                cardView(position);
+                            break;
+                        case (2):
+                            if (GameActivity.side == side) { //같은 곳을 선택한 경우
+                                if (isCasting && castTarget == 3) {
+                                    selectedCard = position;
+                                    clickableCard = false;
+                                    phase2CastTargeting();
+                                } else {
+                                    cardView(position);
+                                }
+                            } else { //다른 곳을 선택한 경우
+                                if (isAttacking) {
+                                    selectedCard = position;
+                                    clickableCard = false;
+                                    phase2AttackSelect();
+                                } else if (isCasting && castTarget == 1) {
+                                    selectedCard = position;
+                                    clickableCard = false;
+                                    phase2CastTargeting();
+                                } else {
+                                }
                             }
-                        }
-                    } else if (isAttacking) {
-                        selectedCard = position;
-                        clickableCard = false;
-                        phase2AttackSelect();
+                            break;
                     }
                 }
             });
@@ -137,7 +170,31 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
         dialog.show();
 
         btn2.setVisibility(View.GONE);
-        if (isField) {
+        if (!isField) {
+            if (data.get(position).getType() == 0) {
+                btn1.setText("소환");
+                btn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectedCard = position;
+                        clickableCard = false;
+                        phase2Summon();
+                        dialog.dismiss();
+                    }
+                });
+            } else if (data.get(position).getType() == 1) {
+                btn1.setText("시전");
+                btn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        selectedCard = position;
+                        clickableCard = false;
+                        phase2Casting();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        } else {
             btn1.setText("공격");
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -145,17 +202,6 @@ public class ListRcvAdapter extends RecyclerView.Adapter<ListRcvAdapter.ViewHold
                     selectedCard = position;
                     clickableCard = false;
                     phase2Attack();
-                    dialog.dismiss();
-                }
-            });
-        } else {
-            btn1.setText("소환");
-            btn1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    selectedCard = position;
-                    clickableCard = false;
-                    phase2Summon();
                     dialog.dismiss();
                 }
             });

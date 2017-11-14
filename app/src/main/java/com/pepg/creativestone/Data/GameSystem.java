@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.pepg.creativestone.GameActivity.addTvLog;
+import static com.pepg.creativestone.GameActivity.hpBlue;
+import static com.pepg.creativestone.GameActivity.hpRed;
 import static com.pepg.creativestone.GameActivity.recentCard;
+import static com.pepg.creativestone.GameActivity.updateHpView;
 
 /**
  * Created by pengu on 2017-11-13.
@@ -22,15 +25,22 @@ public class GameSystem {
     }
 
     public void drawCard(int side) {
-        type = random.nextInt(2);
+        type = random.nextInt(3);
         numA = random.nextInt(10);
         numB = random.nextInt(10);
-        recentCard = new Card(type, numA, numB);
-        if (side == 0) {
-            cardsRed.add(recentCard);
-        } else if (side == 1) {
-            cardsBlue.add(recentCard);
+        if (type >= 2) {
+            type = 0;
         }
+        addCard(side, type, numA, numB);
+    }
+
+    public void changeCard(int side, Card selectedCard) {
+        type = selectedCard.getType();
+        int recentNumA = selectedCard.getNumA();
+        int recentNumB = selectedCard.getNumB();
+        numA = recentNumA + random.nextInt(10 - recentNumA);
+        numB = recentNumB + random.nextInt(10 - recentNumB);
+        addCard(side, type, numA, numB);
     }
 
     public void addCard(int side, int type, int numA, int numB) {
@@ -45,6 +55,64 @@ public class GameSystem {
     public void attack(Card atkCard, Card defCard) {
         defCard.setNumB(defCard.getNumB() - atkCard.getNumA());
         atkCard.setNumB(atkCard.getNumB() - defCard.getNumA());
+    }
+
+    public void attackDirect(Card atkCard, int attackingSide) {
+        if (attackingSide == 0) {
+            hpRed -= atkCard.getNumA();
+        } else if (attackingSide == 1) {
+            hpBlue -= atkCard.getNumA();
+        }
+        addTvLog("직접 공격!");
+        updateHpView();
+    }
+
+    public void casting(int type, Card castCard, ArrayList<Card> targetCards) {
+        switch (type) {
+            case (2):
+                for (int i = 0; i < targetCards.size(); i++) {
+                    targetCards.get(i).setNumB(targetCards.get(i).getNumB() - castCard.getNumA());
+                }
+                addTvLog("적 모두에게 " + castCard.getNumA() + " 광역 데미지!!");
+                break;
+            case (4):
+                addTvLog("ERROR: gameSystem casting error");
+                break;
+        }
+    }
+
+    public void castingTarget(int type, Card castCard, Card targetCard) {
+        switch (type) {
+            case (1):
+                switch (castCard.getNumB()) {
+                    case (0):
+                        targetCard.setNumB(0);
+                        break;
+                    case (4):
+                        targetCard.setNumB(targetCard.getNumB() - castCard.getNumA());
+                        break;
+                    case (5):
+                        targetCard.setNumB(targetCard.getNumB() - castCard.getNumA());
+                        break;
+                    case (6):
+                        targetCard.setNumB(targetCard.getNumB() - castCard.getNumA());
+                        break;
+                    case (7):
+                        targetCard.setNumB(targetCard.getNumB() - castCard.getNumA());
+                        break;
+                }
+                break;
+            case (3):
+                switch (castCard.getNumB()) {
+                    case (1):
+                        targetCard.setNumB(targetCard.getNumB() + castCard.getNumA());
+                        break;
+                    case (2):
+                        targetCard.setNumA(targetCard.getNumA() + castCard.getNumA());
+                        break;
+                }
+                break;
+        }
     }
 
     public void checkDrawEff(Card drawCard, int side) {
