@@ -52,16 +52,27 @@ public class GameSystem {
         }
     }
 
-    public void attack(Card atkCard, Card defCard) {
+    public void attack(Card atkCard, Card defCard, int atkSide) {
+        checkAttackingEff(atkCard, atkSide);
+        if(atkSide==0){
+            checkDefensingEff(defCard, 1);
+        }else{
+            checkDefensingEff(defCard, 0);
+        }
         defCard.setNumB(defCard.getNumB() - atkCard.getNumA());
         atkCard.setNumB(atkCard.getNumB() - defCard.getNumA());
     }
 
-    public void attackDirect(Card atkCard, int attackingSide) {
-        if (attackingSide == 0) {
-            hpRed -= atkCard.getNumA();
-        } else if (attackingSide == 1) {
+    public void attackDirect(Card atkCard, int atkSide) {
+        if(atkSide==0){
+            checkAttackingEff(atkCard, 0);
+        }else{
+            checkAttackingEff(atkCard, 1);
+        }
+        if (atkSide == 0) {
             hpBlue -= atkCard.getNumA();
+        } else if (atkSide == 1) {
+            hpRed -= atkCard.getNumA();
         }
         addTvLog("직접 공격!");
         updateHpView();
@@ -148,6 +159,16 @@ public class GameSystem {
             addCard(side, 0, 9, random.nextInt(10));
             addTvLog("'창조의 정령'의 효과로 '치명적인' 카드를 2장 획득합니다.");
         }
+    }
+
+    public void checkAttackingEff(Card atkCard, int side){
+        if(atkCard.getSpecialCardNo() == 4){
+
+        }
+    }
+
+    public void checkDefensingEff(Card defCard, int side){
+
     }
 
 }

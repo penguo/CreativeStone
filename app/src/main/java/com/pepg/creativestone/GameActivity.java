@@ -447,13 +447,6 @@ public class GameActivity extends AppCompatActivity {
                     }
                     cardsRedField.remove(i);
                     i--;
-                } else if (cardsRedField.get(i).getNumB() < 0) {
-                    addTvLog(cardsRedField.get(i).getName() + " 죽었다!");
-                    if (cardsRedField.get(i).isDeathEff()) {
-                        gameSystem.checkDeathEff(cardsRedField.get(i), 0);
-                    }
-                    cardsRedField.remove(i);
-                    i--;
                 }
             }
         }
@@ -467,13 +460,6 @@ public class GameActivity extends AppCompatActivity {
                     cardsBlueField.remove(i);
                     i--;
                 }
-            } else if (cardsBlueField.get(i).getNumB() < 0) {
-                addTvLog(cardsBlueField.get(i).getName() + " 죽었다!");
-                if (cardsBlueField.get(i).isDeathEff()) {
-                    gameSystem.checkDeathEff(cardsBlueField.get(i), 0);
-                }
-                cardsBlueField.remove(i);
-                i--;
             }
         }
     }
