@@ -284,12 +284,12 @@ public class GameActivity extends AppCompatActivity {
             listRcvAdapterBlue.notifyDataSetChanged();
             listRcvAdapterBlueField.notifyDataSetChanged();
             addTvLog(cardsRedField.get(attackingCard).getName() + "의 공격!");
-            gameSystem.attack(cardsRedField.get(attackingCard), cardsBlueField.get(selectedCard));
+            gameSystem.attack(cardsRedField.get(attackingCard), cardsBlueField.get(selectedCard), 0);
         } else if (side == 1) {
             listRcvAdapterRed.notifyDataSetChanged();
             listRcvAdapterRedField.notifyDataSetChanged();
             addTvLog(cardsBlueField.get(attackingCard).getName() + "의 공격!");
-            gameSystem.attack(cardsBlueField.get(attackingCard), cardsRedField.get(selectedCard));
+            gameSystem.attack(cardsBlueField.get(attackingCard), cardsRedField.get(selectedCard), 1);
         }
         checkDeath();
         isAttacking = false;
